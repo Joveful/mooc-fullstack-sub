@@ -1,17 +1,53 @@
 import { useState } from 'react'
 
+const StatisticLine = (props) => {
+  if (props.text == "positive") {
+    return (
+      <tr>
+        <td>{props.text}</td>
+        <td>{props.value} %</td>
+      </tr>      
+    )
+  }
+  return (
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+    </tr>
+  )
+}
+
 const Statistics = (props) => {
+  const all = props.good + props.bad + props.neutral
+  const avg = (props.good - props.bad) / 
+    (props.good + props.bad + props.neutral)
+  const pos = props.good / 
+    (props.good + props.bad + props.neutral) * 100
+  
+  if (all == 0) {
+    return (
+      <div>
+        No feedback given
+      </div>
+    )
+  }
   return (
     <div>
-      <h1>
-        Statistics
-      </h1>
-      good {props.good}<br/>
-      neutral {props.neutral}<br/>
-      bad {props.bad}<br/>
-      average {(props.good - props.bad) / (props.good + props.bad + props.neutral)}<br/>
-      positive {props.good / (props.good + props.bad + props.neutral) * 100} %
+      <StatisticLine text="good" value={props.good} />
+      <StatisticLine text="neutral" value={props.neutral} />
+      <StatisticLine text="bad" value={props.bad} />
+      <StatisticLine text="all" value={all} />
+      <StatisticLine text="average" value={avg} />
+      <StatisticLine text="positive" value={pos} />
     </div>
+  )
+}
+
+const Button = ({handleClick, text}) => {
+  return (
+    <button onClick={handleClick}> 
+      {text}
+    </button>
   )
 }
 
@@ -38,9 +74,12 @@ const App = () => {
       <h1>
         Give feedback
       </h1>
-      <button onClick={handleGoodClick} >good</button>
-      <button onClick={handleNeutralClick} >neutral</button>
-      <button onClick={handleBadClick} >bad</button>
+      <Button handleClick={handleGoodClick} text="good" />
+      <Button handleClick={handleNeutralClick} text="neutral" />
+      <Button handleClick={handleBadClick} text="bad" />
+      <h1>
+        Statistics
+      </h1>
       <Statistics good={good} bad={bad} neutral={neutral}/>
     </div>
   )
