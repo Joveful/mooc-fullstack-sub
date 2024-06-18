@@ -6,6 +6,32 @@ const Button = ({handleClick, text}) => {
   )
 }
 
+const RandomAnecdote = ({votes, anecdotes, idx}) => {
+  return (
+    <div>
+      <h1>Anecdote of the day</h1>
+      {anecdotes[idx]}<br/>
+      has {votes[idx]} votes
+    </div>
+  )
+}
+
+const MostVoted = ({votes, anecdotes}) => {
+  let maxIdx = 0
+  for (let i = 0; i < votes.length ; i++) {
+    if (votes[i] > votes[maxIdx]) {
+      maxIdx = i
+    }
+  }
+  return (
+    <div>
+      <h1>Anecdote with the most votes</h1>
+      {anecdotes[maxIdx]}<br/>
+      has {votes[maxIdx]} votes
+    </div>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -17,17 +43,26 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.',
     'The only way to go fast, is to go well.'
   ]
-   
+  
+  const [votes , setVotes] = useState(new Uint8Array(anecdotes.length))
   const [selected, setSelected] = useState(0)
 
   const handleRandomClick = () => {
     setSelected(Math.floor(Math.random() * anecdotes.length))
   }
 
+  const handleVoteClick = () => {
+    const copy = [...votes]
+    copy[selected] += 1
+    setVotes(copy)
+  }
+
   return (
     <div>
-      {anecdotes[selected]}<br/>
+      <RandomAnecdote votes={votes} anecdotes={anecdotes} idx={selected} />
       <Button handleClick={handleRandomClick} text="Next" />
+      <Button handleClick={handleVoteClick} text="Vote" />     
+      <MostVoted votes={votes} anecdotes={anecdotes}/>
     </div>
   )
 }
