@@ -1,3 +1,3 @@
-# Tehtävä 1 kurssitiedot
+# Tehtävä 2 kurssitiedot
 
-Suoritettu tehtävän 1.5 mukaisesti.
+Suoritettu tehtävän 2.5 mukaisesti.
