@@ -1,48 +1,7 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { Filter, PersonForm, Persons } from './components/Person'
+import personService from './services/persons'
 
-const Filter = ({filter, handle}) => {
-  return (
-    <div>
-      filter: <input
-        value={filter}
-        onChange={handle}
-      />
-    </div>
-  )
-}
-
-const PersonForm = ({addName, newName, handleName, newNum, handleNum}) => {
-  return (
-    <form onSubmit={addName}>
-      <div>
-        name: <input 
-          value={newName}
-          onChange={handleName}
-        />
-      </div>
-      <div>
-        number: <input
-          value={newNum}
-          onChange={handleNum}
-        />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  )
-}
-
-const Persons = ({persons}) => {
-  return (
-    persons.map((person) =>
-      <div key={person.name}>
-        {person.name} {person.number}
-      </div>
-    )
-  )
-}
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -51,31 +10,63 @@ const App = () => {
   const [filterPersons, setFilterPersons] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
+
+  // Handle existing person's number change
+  // called from addName
+  const changeNumber = (id) => {
+    if(window.confirm(`${newName} is already in the phonebook. Do you want to replace the number?`)) {
+      const person = persons.find(p => p.id === id)
+      const changedPerson = { ...person, number: newNumber }
+      
+      personService
+        .updateNumber(id, changedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+        })
+    }
+  }
+
   const addName = (event) => {
     event.preventDefault()
     // check if name is already in array
     const duplicate = persons.find(
       (person) => person.name === newName
     )
-    
+    console.log(duplicate)
     if (!duplicate) {
       const nameObject = {
         name: newName,
         number: newNumber
       }
-
-      setPersons(persons.concat(nameObject))
-      setNewName('')
-      setNewNumber('')
+      
+      personService
+        .createPerson(nameObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
     }
     else {
-      alert(`${newName} is already added to phonebook`)
+      changeNumber(duplicate.id)
+    }
+  }
+
+  const deletePersonById = person => {
+    if(window.confirm(`Delete ${person.name}`)) {
+      personService
+        .deletePerson(person.id)
+        .then(returnedPerson => {
+          setPersons(persons.filter(person =>
+            person.id !== returnedPerson.id
+          ))
+      })
     }
   }
 
@@ -105,7 +96,10 @@ const App = () => {
         newNum={newNumber} handleNum={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={personsToShow}/>
+      <Persons 
+        persons={personsToShow} 
+        deletePersonById={deletePersonById}
+      />
     </div>
   )
 }
