@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Filter, PersonForm, Persons } from './components/Person'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 
 const App = () => {
@@ -8,6 +9,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterPersons, setFilterPersons] = useState('')
+  const [messageType, setMessageType] = useState("success")
+  const [alertMessage, setAlertMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -29,6 +32,13 @@ const App = () => {
         .then(returnedPerson => {
           setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
         })
+      // Successful number change
+      setMessageType("success")
+      setAlertMessage(`Changed number for ${person.name}`)
+      setTimeout(() => {
+        setAlertMessage(null)
+      }, 5000)
+        
     }
   }
 
@@ -38,7 +48,7 @@ const App = () => {
     const duplicate = persons.find(
       (person) => person.name === newName
     )
-    console.log(duplicate)
+
     if (!duplicate) {
       const nameObject = {
         name: newName,
@@ -52,6 +62,12 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+      // Successful added contact
+      setMessageType("success")
+      setAlertMessage(`Added ${newName}`)
+      setTimeout(() => {
+        setAlertMessage(null)
+      }, 5000)
     }
     else {
       changeNumber(duplicate.id)
@@ -66,7 +82,22 @@ const App = () => {
           setPersons(persons.filter(person =>
             person.id !== returnedPerson.id
           ))
-      })
+        })
+        .catch(error => {
+          console.log(error)
+          setMessageType("error")
+          setAlertMessage(`Person ${person.name} was already removed`)
+          setTimeout(() => {
+            setAlertMessage(null)
+          }, 5000)
+        })
+      
+      // Successful deletion
+      setMessageType("success")
+      setAlertMessage(`Deleted ${person.name}`)
+      setTimeout(() => {
+        setAlertMessage(null)
+      }, 5000)
     }
   }
 
@@ -89,6 +120,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={alertMessage}  type={messageType} />
       <Filter filter={filterPersons} handle={handleFilterPersonsChange} />
       <h3>Add new entry</h3>
       <PersonForm addName={addName}
