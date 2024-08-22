@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import weatherService from './services/weather'
 import Country from './components/Country'
 import Filter from './components/Filter'

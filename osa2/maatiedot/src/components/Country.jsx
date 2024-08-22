@@ -38,7 +38,6 @@ const Country = ({countries, handleShow}) => {
 }
 
 const ShowOneCountry = ({countries}) => {
-  console.log(countries)
   const languages = Object.values(countries[0].languages)
   const [weather, setWeather] = useState(null)
 
