@@ -47,14 +47,6 @@ const blogs = [
     url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
     likes: 0,
     __v: 0
-  },
-  {
-    _id: "5a422bc61b54a676234d17fc",
-    title: "Type wars",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    likes: 2,
-    __v: 0
   }
 ]
 
@@ -88,6 +80,35 @@ test('blogs contain 5 entries', async () => {
   const response = await api.get('/api/blogs')
 
   assert.strictEqual(response.body.length, 5)
+})
+
+test('blog contains id field', async () => {
+  const response = await api.get('/api/blogs')
+
+  assert.strictEqual(response.body[0]._id, undefined)
+  assert.strictEqual(response.body[0].id, blogs[0]._id)
+})
+
+test('add a new blog', async () => {
+  const newBlog = {
+    title: 'New blog',
+    author: 'New author',
+    url: 'fakesite.org',
+    likes: 12
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+
+  const contents = response.body.map(r => r.title)
+
+  assert.strictEqual(response.body.length, blogs.length + 1)
+  assert(contents.includes('New blog'))
 })
 
 after(async () => {
