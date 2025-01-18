@@ -1,11 +1,11 @@
 const { test, after, beforeEach } = require('node:test')
-const Blog = require('../models/blog')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-
 const api = supertest(app)
+
+const Blog = require('../models/blog')
 
 const blogs = [
   {
@@ -109,6 +109,47 @@ test('add a new blog', async () => {
 
   assert.strictEqual(response.body.length, blogs.length + 1)
   assert(contents.includes('New blog'))
+})
+
+test('likes set to zero', async () => {
+  const newBlog = {
+    title: 'New blog',
+    author: 'John Writer',
+    url: 'realwebsite.com'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+  assert.strictEqual(response.body[5].likes, 0)
+})
+
+test('blog with title or url missing is not added', async () => {
+  const missingTitle = {
+    author: 'John Writer',
+    url: 'realwebsite.com'
+  }
+  const missingUrl = {
+    title: 'New blog',
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(missingTitle)
+    .expect(400)
+
+  await api
+    .post('/api/blogs')
+    .send(missingUrl)
+    .expect(400)
+
+  const response = await api.get('/api/blogs')
+
+  assert.strictEqual(response.body.length, blogs.length)
 })
 
 after(async () => {
