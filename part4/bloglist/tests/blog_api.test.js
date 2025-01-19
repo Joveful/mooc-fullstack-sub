@@ -152,6 +152,34 @@ test('blog with title or url missing is not added', async () => {
   assert.strictEqual(response.body.length, blogs.length)
 })
 
+test('delete a blog', async () => {
+  const response = await api.get('/api/blogs')
+  const id = response.body[0].id
+
+  await api
+    .delete(`/api/blogs/${id}`)
+    .expect(204)
+
+  const newResponse = await api.get('/api/blogs')
+  assert.strictEqual(newResponse.body.length, blogs.length - 1)
+})
+
+test('update a blog', async () => {
+  const updatedBlog = {
+    likes: 15
+  }
+
+  const id = blogs[0]._id
+  await api
+    .put(`/api/blogs/${id}`)
+    .send(updatedBlog)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+  assert.strictEqual(response.body[0].likes, 15)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
