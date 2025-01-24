@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs/
 Content-Type: application/json
 
 {
-    "title": "Test title",
+    "title": "Test blog with user",
     "author": "Real Person",
-    "url": "realblogsite.org",
-    "likes": 12
+    "url": "unrealblogsite.org",
+    "likes": 1,
+    "userId": "6793d294f57aa16a2b89ca71"
 }

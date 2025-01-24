@@ -173,6 +173,27 @@ describe('test with one user in db', () => {
     const usernames = usersAtEnd.map(u => u.username)
     assert(usernames.includes(newUser.username))
   })
+
+  test('test duplicate username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'root',
+      name: 'super user',
+      password: 'goodpw12'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+
+    assert(result.body.error.includes('username already taken'))
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
 })
 
 after(async () => {
