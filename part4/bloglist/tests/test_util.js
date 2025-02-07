@@ -44,6 +44,14 @@ const blogs = [
   }
 ]
 
+const initialUsers = [
+  {
+    username: "root",
+    name: "Superuser",
+    password: "admin"
+  }
+]
+
 const usersInDb = async () => {
   const users = await User.find({})
   return users.map(user => user.toJSON())
