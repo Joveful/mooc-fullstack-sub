@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm.jsx'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -9,7 +10,7 @@ const App = () => {
   const [newBlog, setNewBlog] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
-  const [showAll, setShowAll] = useState(true)
+  const [createBlogVisible, setCreateBlogVisible] = useState(false)
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState(null)
   const [username, setUsername] = useState('')
@@ -31,23 +32,12 @@ const App = () => {
     )
   }, [])
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newBlog,
-      author: newAuthor,
-      url: newUrl,
-    }
-
+  const createBlog = async (blogObject) => {
     try {
       const returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(returnedBlog))
-      setNewBlog('')
-      setNewAuthor('')
-      setNewUrl('')
-
       setMessageType('success')
-      setMessage(`Added blog: ${newBlog} by ${newAuthor}`)
+      setMessage(`Added blog: ${blogObject['title']} by ${blogObject['author']}`)
       setTimeout(() => {
         setMessage(null)
         setMessageType(null)
@@ -116,38 +106,24 @@ const App = () => {
     </form>
   )
 
-  const blogForm = () => (
-    <div>
-      <h2>blogs</h2>
-      <form onSubmit={addBlog}>
-        <div>
-          title:
-          <input
-            value={newBlog}
-            onChange={({ target }) => setNewBlog(target.value)}
-          />
+  const blogForm = () => {
+    const hideWhenVisible = { display: createBlogVisible ? 'none' : '' }
+    const showWhenVisible = { display: createBlogVisible ? '' : 'none' }
+
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setCreateBlogVisible(true)}>new blog</button>
         </div>
-        <div>
-          author:
-          <input
-            value={newAuthor}
-            onChange={({ target }) => setNewAuthor(target.value)}
+        <div style={showWhenVisible}>
+          <BlogForm
+            createBlog={createBlog}
           />
+          <button onClick={() => setCreateBlogVisible(false)}>cancel</button>
         </div>
-        <div>
-          url:
-          <input
-            value={newUrl}
-            onChange={({ target }) => setNewUrl(target.value)}
-          />
-        </div>
-        <button type="submit">save</button>
-      </form>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-    </div>
-  )
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -162,6 +138,9 @@ const App = () => {
           {blogForm()}
         </div>
       }
+      {blogs.map(blog =>
+        <Blog key={blog.id} blog={blog} />
+      )}
 
     </div>
   )
