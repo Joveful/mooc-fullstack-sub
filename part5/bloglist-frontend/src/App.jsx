@@ -2,15 +2,12 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm.jsx'
 import Notification from './components/Notification'
+import Toggleable from './components/Toggleable.jsx'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
-  const [createBlogVisible, setCreateBlogVisible] = useState(false)
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState(null)
   const [username, setUsername] = useState('')
@@ -106,25 +103,6 @@ const App = () => {
     </form>
   )
 
-  const blogForm = () => {
-    const hideWhenVisible = { display: createBlogVisible ? 'none' : '' }
-    const showWhenVisible = { display: createBlogVisible ? '' : 'none' }
-
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setCreateBlogVisible(true)}>new blog</button>
-        </div>
-        <div style={showWhenVisible}>
-          <BlogForm
-            createBlog={createBlog}
-          />
-          <button onClick={() => setCreateBlogVisible(false)}>cancel</button>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div>
       <h1>blogs</h1>
@@ -135,12 +113,14 @@ const App = () => {
         <div>
           <p>{user.name} logged in</p>
           <button onClick={handleLogout}>logout</button>
-          {blogForm()}
+          <Toggleable buttonLabel="new blog">
+            <BlogForm createBlog={createBlog} />
+          </Toggleable>
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} />
+          )}
         </div>
       }
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
 
     </div>
   )
