@@ -55,6 +55,7 @@ const App = () => {
   const updateLikes = async (id, blogObject) => {
     try {
       const returnedBlog = await blogService.update(id, blogObject)
+      returnedBlog.user = blogs.find(blog => blog.id === id).user
       setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
     } catch (exception) {
       setMessage('Failed to update likes')
@@ -138,7 +139,6 @@ const App = () => {
           )}
         </div>
       }
-
     </div>
   )
 }
