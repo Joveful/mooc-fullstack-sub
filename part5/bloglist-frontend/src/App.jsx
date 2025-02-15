@@ -27,7 +27,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+      setBlogs(blogs.sort((a, b) => b.likes - a.likes))
     )
   }, [])
 
@@ -59,6 +59,20 @@ const App = () => {
       setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
     } catch (exception) {
       setMessage('Failed to update likes')
+      setMessageType('error')
+      setTimeout(() => {
+        setMessage(null)
+        setMessageType(null)
+      }, 5000)
+    }
+  }
+
+  const deleteBlog = async (id) => {
+    try {
+      await blogService.remove(id)
+      setBlogs(blogs.filter(blog => blog.id !== id))
+    } catch (exception) {
+      setMessage('Failed to delete blog')
       setMessageType('error')
       setTimeout(() => {
         setMessage(null)
@@ -135,7 +149,7 @@ const App = () => {
             <BlogForm createBlog={createBlog} />
           </Toggleable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} updateLikes={updateLikes} />
+            <Blog key={blog.id} blog={blog} user={user} updateLikes={updateLikes} handleRemove={deleteBlog} />
           )}
         </div>
       }
