@@ -35,6 +35,7 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     try {
       const returnedBlog = await blogService.create(blogObject)
+      returnedBlog.user = user
       setBlogs(blogs.concat(returnedBlog))
       setMessageType('success')
       setMessage(`Added blog: ${blogObject['title']} by ${blogObject['author']}`)
