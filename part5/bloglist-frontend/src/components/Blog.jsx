@@ -7,14 +7,6 @@ const Blog = ({ blog, updateLikes, user, handleRemove }) => {
   const showWhenVisible = { display: visible ? '' : 'none' }
   const showRemove = { display: blog.user.username === user.username ? '' : 'none' }
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
   const toggleVisibility = () => {
     setVisible(!visible)
   }
@@ -37,7 +29,7 @@ const Blog = ({ blog, updateLikes, user, handleRemove }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div className='blogstyle'>
       <div style={hideWhenVisible}>
         {blog.title} {blog.author}<button onClick={toggleVisibility}>view</button>
       </div>
