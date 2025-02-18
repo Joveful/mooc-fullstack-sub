@@ -23,14 +23,22 @@ const App = () => {
   // Handle existing person's number change
   // called from addName
   const changeNumber = (id) => {
-    if(window.confirm(`${newName} is already in the phonebook. Do you want to replace the number?`)) {
+    if (window.confirm(`${newName} is already in the phonebook. Do you want to replace the number?`)) {
       const person = persons.find(p => p.id === id)
       const changedPerson = { ...person, number: newNumber }
-      
+
       personService
         .updateNumber(id, changedPerson)
         .then(returnedPerson => {
           setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+        })
+        .catch(error => {
+          console.log(error)
+          setMessageType("error")
+          setAlertMessage(`Person ${person.name} already removed`)
+          setTimeout(() => {
+            setAlertMessage(null)
+          }, 5000)
         })
       // Successful number change
       setMessageType("success")
@@ -38,7 +46,7 @@ const App = () => {
       setTimeout(() => {
         setAlertMessage(null)
       }, 5000)
-        
+
     }
   }
 
@@ -54,7 +62,7 @@ const App = () => {
         name: newName,
         number: newNumber
       }
-      
+
       personService
         .createPerson(nameObject)
         .then(returnedPerson => {
@@ -75,7 +83,7 @@ const App = () => {
   }
 
   const deletePersonById = person => {
-    if(window.confirm(`Delete ${person.name}`)) {
+    if (window.confirm(`Delete ${person.name}`)) {
       personService
         .deletePerson(person.id)
         .then(returnedPerson => {
@@ -91,7 +99,7 @@ const App = () => {
             setAlertMessage(null)
           }, 5000)
         })
-      
+
       // Successful deletion
       setMessageType("success")
       setAlertMessage(`Deleted ${person.name}`)
@@ -120,7 +128,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={alertMessage}  type={messageType} />
+      <Notification message={alertMessage} type={messageType} />
       <Filter filter={filterPersons} handle={handleFilterPersonsChange} />
       <h3>Add new entry</h3>
       <PersonForm addName={addName}
@@ -128,8 +136,8 @@ const App = () => {
         newNum={newNumber} handleNum={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons 
-        persons={personsToShow} 
+      <Persons
+        persons={personsToShow}
         deletePersonById={deletePersonById}
       />
     </div>
