@@ -51,7 +51,24 @@ describe('Blog App', () => {
       await page.getByTestId('url').fill('Test url')
       await page.getByRole('button', { name: 'save' }).click()
 
-      await expect(page.getByText('Added blog: Test title by Test author')).toBeVisible()
+      await expect(page.getByText('Test title Test author view')).toBeVisible()
+    })
+
+    describe('with a blog in db', () => {
+      beforeEach(async ({ page }) => {
+        await page.getByRole('button', { name: 'new blog' }).click()
+        await page.getByTestId('title').fill('Test title')
+        await page.getByTestId('author').fill('Test author')
+        await page.getByTestId('url').fill('Test url')
+        await page.getByRole('button', { name: 'save' }).click()
+      })
+
+      test('a blog can be liked', async ({ page }) => {
+        await page.getByRole('button', { name: 'view' }).click()
+        await page.getByRole('button', { name: 'like' }).click()
+
+        await expect(page.getByText('likes 1')).toBeVisible()
+      })
     })
   })
 })
