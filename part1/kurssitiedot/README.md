@@ -1,3 +1,4 @@
-# Tehtävä 1 kurssitiedot
+# Course info
 
-Suoritettu tehtävän 1.5 mukaisesti.
+Implemented as in step 1.5
+
