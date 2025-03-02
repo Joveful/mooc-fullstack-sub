@@ -46,9 +46,11 @@ const blogs = [
 
 const initialUsers = [
   {
+    _id: "6793d294f57aa16a2b89ca71",
     username: "root",
     name: "Superuser",
-    password: "admin"
+    passwordHash: "$2b$10$R9M7i7DF4bhYOIImN4Hlp.aBify2EvqHfNX2iGvC13fGu4wpoj7BK",
+    __v: 39
   }
 ]
 
@@ -58,5 +60,5 @@ const usersInDb = async () => {
 }
 
 module.exports = {
-  blogs, usersInDb
+  blogs, usersInDb, initialUsers
 }

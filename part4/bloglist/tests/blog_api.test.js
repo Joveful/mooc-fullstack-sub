@@ -1,4 +1,5 @@
 const { test, after, beforeEach, describe } = require('node:test')
+require('dotenv').config()
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -14,6 +15,7 @@ const User = require('../models/user')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
+  await User.deleteMany({})
 
   let blogObject = new Blog(helper.blogs[0])
   await blogObject.save()
@@ -29,6 +31,9 @@ beforeEach(async () => {
 
   blogObject = new Blog(helper.blogs[4])
   await blogObject.save()
+
+  userObject = new User(helper.initialUsers[0])
+  await userObject.save()
 })
 
 test('helper.blogs returned as json', async () => {
@@ -61,6 +66,7 @@ test('add a new blog', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${process.env.TOKEN}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -82,6 +88,7 @@ test('likes set to zero', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${process.env.TOKEN}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
