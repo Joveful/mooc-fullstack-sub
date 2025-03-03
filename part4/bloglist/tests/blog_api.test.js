@@ -79,6 +79,21 @@ test('add a new blog', async () => {
   assert(contents.includes('New blog'))
 })
 
+test('blog add fails without token', async () => {
+  const newBlog = {
+    title: 'New blog',
+    author: 'John Writer',
+    url: 'realwebsite.com'
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+
+  assert.strictEqual(response.body.error, 'invalid token')
+})
+
 test('likes set to zero', async () => {
   const newBlog = {
     title: 'New blog',
@@ -108,11 +123,13 @@ test('blog with title or url missing is not added', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${process.env.TOKEN}`)
     .send(missingTitle)
     .expect(400)
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${process.env.TOKEN}`)
     .send(missingUrl)
     .expect(400)
 
@@ -127,6 +144,7 @@ test('delete a blog', async () => {
 
   await api
     .delete(`/api/blogs/${id}`)
+    .set('Authorization', `Bearer ${process.env.TOKEN}`)
     .expect(204)
 
   const newResponse = await api.get('/api/blogs')
@@ -149,6 +167,8 @@ test('update a blog', async () => {
   assert.strictEqual(response.body[0].likes, 15)
 })
 
+// TODO: figure out why I wrote these tests,
+// because I don't know why they are here.
 describe('test with one user in db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
