@@ -88,6 +88,30 @@ describe('Blog App', () => {
 
         await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
       })
+
+      describe('with multiple blogs in db', () => {
+        beforeEach(async ({ page }) => {
+          await createBlog(page, 'Test title2', 'Test author2', 'Testurl2.com')
+          await page.getByRole('button', { name: 'view' }).first().click()
+          await page.getByRole('button', { name: 'like' }).first().click()
+
+          await page.getByRole('button', { name: 'view' }).nth(0).click()
+          await page.getByRole('button', { name: 'like' }).nth(1).click()
+          await page.getByRole('button', { name: 'like' }).nth(1).click()
+          await page.reload()
+        })
+
+        test('blogs ordered by likes', async ({ page }) => {
+          const blogList = await page.$$eval('ul > li', items => items.map(item => item.textContent.trim()))
+
+          const expectedOrder = [
+            'Test title2 Test author2 viewTest title2 Test author2 hideTesturl2.comlikes 2 likeSuperuserremove',
+            'Test title Test author viewTest title Test author hideTest urllikes 1 likeSuperuserremove'
+          ]
+
+          expect(blogList).toEqual(expectedOrder)
+        })
+      })
     })
   })
 })
