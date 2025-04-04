@@ -9,8 +9,29 @@ const AnecdoteForm = () => {
 
   const newAnecdoteMutation = useMutation({
     mutationFn: createAnecdote,
-    onSuccess: () => {
+    onSuccess: (variables) => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
+      console.log(variables)
+      dispatch({
+        type: 'SET_NOTIFICATION',
+        data: `you created '${variables.content}'`,
+      })
+      setTimeout(() => {
+        dispatch({
+          type: 'CLEAR_NOTIFICATION',
+        })
+      }, 5000)
+    },
+    onError: (error) => {
+      dispatch({
+        type: 'SET_NOTIFICATION',
+        data: error.response.data.error,
+      })
+      setTimeout(() => {
+        dispatch({
+          type: 'CLEAR_NOTIFICATION',
+        })
+      }, 5000)
     },
   })
 
@@ -19,16 +40,6 @@ const AnecdoteForm = () => {
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
     newAnecdoteMutation.mutate({ content, votes: 0 })
-    dispatch({
-      type: 'SET_NOTIFICATION',
-      data: `you created '${content}'`,
-    })
-    setTimeout(() => {
-      dispatch({
-        type: 'CLEAR_NOTIFICATION',
-        data: '',
-      })
-    }, 5000)
   }
 
   return (
