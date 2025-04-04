@@ -20,23 +20,22 @@ const App = () => {
 
   const updateAnecdoteMutation = useMutation({
     mutationFn: updateAnecdote,
-    onSuccess: () => {
+    onSuccess: (variable) => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
+      dispatch({
+        type: 'SET_NOTIFICATION',
+        data: `you voted '${variable.content}'`,
+      })
+      setTimeout(() => {
+        dispatch({
+          type: 'CLEAR_NOTIFICATION',
+        })
+      }, 5000)
     }
   })
 
   const handleVote = async (anecdote) => {
     updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 })
-    dispatch({
-      type: 'SET_NOTIFICATION',
-      data: `you voted '${anecdote.content}'`,
-    })
-    setTimeout(() => {
-      dispatch({
-        type: 'CLEAR_NOTIFICATION',
-        data: '',
-      })
-    }, 5000)
   }
 
   const result = useQuery({

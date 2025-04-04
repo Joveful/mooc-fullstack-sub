@@ -11,7 +11,6 @@ const AnecdoteForm = () => {
     mutationFn: createAnecdote,
     onSuccess: (variables) => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
-      console.log(variables)
       dispatch({
         type: 'SET_NOTIFICATION',
         data: `you created '${variables.content}'`,
