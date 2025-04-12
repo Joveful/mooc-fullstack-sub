@@ -9,8 +9,6 @@ const Notification = () => {
     style = null
   }
 
-  console.log(notification)
-  console.log(style)
   return <div className={style}>{notification}</div>
 }
 
