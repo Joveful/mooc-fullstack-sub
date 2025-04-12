@@ -36,6 +36,7 @@ export const addBlog = (content) => {
   return async (dispatch) => {
     const newBlog = await blogService.create(content)
     dispatch(appendBlog(newBlog))
+    dispatch(initializeBlogs())
   }
 }
 
@@ -49,8 +50,7 @@ export const voteBlog = (blog) => {
 export const removeBlog = (id) => {
   return async (dispatch) => {
     await blogService.remove(id)
-    const blogs = await blogService.getAll()
-    dispatch(setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
+    dispatch(initializeBlogs())
   }
 }
 
