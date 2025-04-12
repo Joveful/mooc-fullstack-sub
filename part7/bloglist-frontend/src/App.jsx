@@ -1,21 +1,17 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setNotification } from './reducers/notificationReducer'
-import { initializeBlogs, addBlog } from './reducers/blogReducer'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { initializeBlogs } from './reducers/blogReducer'
 import { logoutUser, setLoggedInUser } from './reducers/userReducer'
-import Blog from './components/Blog'
-import BlogForm from './components/BlogForm'
+import BlogList from './components/BlogList'
+import UserList from './components/UserList'
 import Notification from './components/Notification'
-import Toggleable from './components/Toggleable'
 import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 
 const App = () => {
   const dispatch = useDispatch()
   const user = useSelector((state) => state.user)
-  const blogs = useSelector((state) => state.blog)
-
-  const blogFormRef = useRef()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -29,22 +25,6 @@ const App = () => {
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [])
-
-  const createBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility()
-    try {
-      dispatch(addBlog({ ...blogObject, user: user }))
-      dispatch(
-        setNotification(
-          `Added blog: ${blogObject['title']} by ${blogObject['author']}`,
-          true,
-          5
-        )
-      )
-    } catch (exception) {
-      dispatch(setNotification('Failed to add blog', false, 5))
-    }
-  }
 
   const handleLogout = (event) => {
     event.preventDefault()
@@ -64,14 +44,12 @@ const App = () => {
         <div>
           <p>{user.name} logged in</p>
           <button onClick={handleLogout}>logout</button>
-          <Toggleable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm createBlog={createBlog} />
-          </Toggleable>
-          <ul>
-            {blogs.map((blog) => (
-              <Blog key={blog.id} blog={blog} user={user} />
-            ))}
-          </ul>
+          <Router>
+            <Routes>
+              <Route path="/" element={<BlogList />} />
+              <Route path="/users" element={<UserList />} />
+            </Routes>
+          </Router>
         </div>
       )}
     </div>
