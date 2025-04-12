@@ -16,11 +16,11 @@ const blogSlice = createSlice({
       const blogToChange = state.find((b) => b.id === id)
       const changedBlog = {
         ...blogToChange,
-        votes: blogToChange.votes + 1,
+        likes: blogToChange.likes + 1,
       }
       return state
         .map((blog) => (blog.id !== id ? blog : changedBlog))
-        .sort((a, b) => b.votes - a.votes)
+        .sort((a, b) => b.likes - a.likes)
     },
   },
 })
@@ -28,7 +28,7 @@ const blogSlice = createSlice({
 export const initializeBlogs = () => {
   return async (dispatch) => {
     const blogs = await blogService.getAll()
-    dispatch(setBlogs(blogs.sort((a, b) => b.votes - a.votes)))
+    dispatch(setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
   }
 }
 
@@ -43,6 +43,14 @@ export const voteBlog = (blog) => {
   return async (dispatch) => {
     const updatedBlog = await blogService.update(blog)
     dispatch(incrementVote(updatedBlog.id))
+  }
+}
+
+export const removeBlog = (id) => {
+  return async (dispatch) => {
+    await blogService.remove(id)
+    const blogs = await blogService.getAll()
+    dispatch(setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
   }
 }
 

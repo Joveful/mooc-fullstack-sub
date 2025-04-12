@@ -16,7 +16,7 @@ const notificationSlice = createSlice({
       },
     },
     clearMessage: (state) => {
-      state.message = ''
+      state.message = null
       state.type = null
     },
   },
