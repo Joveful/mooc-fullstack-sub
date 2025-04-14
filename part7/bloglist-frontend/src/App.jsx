@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { initializeBlogs } from './reducers/blogReducer'
 import { logoutUser, setLoggedInUser } from './reducers/userReducer'
+import User from './components/User'
 import BlogList from './components/BlogList'
 import UserList from './components/UserList'
 import Notification from './components/Notification'
@@ -48,6 +49,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<BlogList />} />
               <Route path="/users" element={<UserList />} />
+              <Route path="/users/:id" element={<User />} />
             </Routes>
           </Router>
         </div>
