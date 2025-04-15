@@ -2,9 +2,9 @@ import { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
 import { addBlog } from '../reducers/blogReducer'
+import { Link } from 'react-router-dom'
 import Toggleable from './Toggleable'
 import BlogForm from './BlogForm'
-import Blog from './Blog'
 
 const BlogList = () => {
   const blogFormRef = useRef()
@@ -33,11 +33,11 @@ const BlogList = () => {
       <Toggleable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Toggleable>
-      <ul>
-        {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} user={user} />
-        ))}
-      </ul>
+      {blogs.map((blog) => (
+        <div key={blog.id} className='blogstyle'>
+          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+        </div>
+      ))}
     </div>
   )
 }
