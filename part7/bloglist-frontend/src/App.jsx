@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { initializeBlogs } from './reducers/blogReducer'
 import { logoutUser, setLoggedInUser } from './reducers/userReducer'
 import User from './components/User'
@@ -35,18 +35,29 @@ const App = () => {
     blogService.setToken(null)
   }
 
+  const padding = {
+    padding: 5
+  }
+
+  const navbar = {
+    backgroundColor: 'lightgrey'
+  }
+
   return (
     <div>
-      <h1>blogs</h1>
-      <Notification />
-
       {user === null ? (
         <LoginForm />
       ) : (
         <div>
-          <p>{user.name} logged in</p>
-          <button onClick={handleLogout}>logout</button>
           <Router>
+            <div style={navbar}>
+              <Link style={padding} to="/">blogs</Link>
+              <Link style={padding} to="/users">users</Link>
+              <em>{user.name} logged in</em>
+              <button onClick={handleLogout}>logout</button>
+            </div>
+            <Notification />
+            <h1>blog app</h1>
             <Routes>
               <Route path="/" element={<BlogList />} />
               <Route path="/users" element={<UserList />} />
