@@ -34,7 +34,7 @@ const BlogList = () => {
         <BlogForm createBlog={createBlog} />
       </Toggleable>
       {blogs.map((blog) => (
-        <div key={blog.id} className='blogstyle'>
+        <div key={blog.id} className="blogstyle">
           <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
         </div>
       ))}

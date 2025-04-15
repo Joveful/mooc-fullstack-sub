@@ -6,7 +6,7 @@ const Blog = ({ user }) => {
   const dispatch = useDispatch()
   const id = useParams().id
   const blogs = useSelector((state) => state.blog)
-  const blog = blogs.find(b => b.id === id)
+  const blog = blogs.find((b) => b.id === id)
 
   if (!blog) {
     return null
@@ -29,7 +29,9 @@ const Blog = ({ user }) => {
 
   return (
     <div>
-      <h2>{blog.title} {blog.author}</h2>
+      <h2>
+        {blog.title} {blog.author}
+      </h2>
       {blog.url}
       <br />
       likes {blog.likes} <button onClick={() => like(blog)}>like</button>

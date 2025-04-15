@@ -36,11 +36,11 @@ const App = () => {
   }
 
   const padding = {
-    padding: 5
+    padding: 5,
   }
 
   const navbar = {
-    backgroundColor: 'lightgrey'
+    backgroundColor: 'lightgrey',
   }
 
   return (
@@ -51,8 +51,12 @@ const App = () => {
         <div>
           <Router>
             <div style={navbar}>
-              <Link style={padding} to="/">blogs</Link>
-              <Link style={padding} to="/users">users</Link>
+              <Link style={padding} to="/">
+                blogs
+              </Link>
+              <Link style={padding} to="/users">
+                users
+              </Link>
               <em>{user.name} logged in</em>
               <button onClick={handleLogout}>logout</button>
             </div>
