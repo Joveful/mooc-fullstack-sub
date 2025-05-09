@@ -40,7 +40,18 @@ const Blog = ({ user }) => {
       <div style={showRemove}>
         <button onClick={deleteBlog}>remove</button>
       </div>
-    </div>
+      <h3>comments</h3>
+      <form>
+        <div>
+          <input type="text" />
+          <button >add comment</button>
+        </div>
+      </form >
+      <ul>
+        {blog.comments.map(c =>
+          <li>{c}</li>)}
+      </ul>
+    </div >
   )
 }
 
