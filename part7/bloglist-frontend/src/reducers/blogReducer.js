@@ -22,6 +22,16 @@ const blogSlice = createSlice({
         .map((blog) => (blog.id !== id ? blog : changedBlog))
         .sort((a, b) => b.likes - a.likes)
     },
+    addendComment: (state, action) => {
+      const id = action.payload
+      const blogToChange = state.find((b) => b.id === id)
+      const changedBlog = {
+        ...blogToChange,
+        comments: [...blogToChange.comments]
+      }
+      return state
+        .map((blog) => (blog.id !== id ? blog : changedBlog))
+    }
   },
 })
 

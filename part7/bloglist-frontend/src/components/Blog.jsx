@@ -1,12 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { voteBlog, removeBlog } from '../reducers/blogReducer'
+import blogService from '../services/blogs'
 
 const Blog = ({ user }) => {
   const dispatch = useDispatch()
   const id = useParams().id
   const blogs = useSelector((state) => state.blog)
   const blog = blogs.find((b) => b.id === id)
+  const [com, setCom] = useState('')
 
   if (!blog) {
     return null
@@ -27,6 +30,15 @@ const Blog = ({ user }) => {
     }
   }
 
+  const handleComment = (event) => {
+    event.preventDefault()
+    console.log(com)
+    console.log(blog.id)
+    blogService.comment(com, blog.id)
+
+    setCom('')
+  }
+
   return (
     <div>
       <h2>
@@ -41,9 +53,9 @@ const Blog = ({ user }) => {
         <button onClick={deleteBlog}>remove</button>
       </div>
       <h3>comments</h3>
-      <form>
+      <form onSubmit={handleComment}>
         <div>
-          <input type="text" />
+          <input type="text" value={com} onChange={(event) => setCom(event.target.value)} />
           <button >add comment</button>
         </div>
       </form >
