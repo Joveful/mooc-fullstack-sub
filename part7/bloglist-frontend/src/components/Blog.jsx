@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { voteBlog, removeBlog } from '../reducers/blogReducer'
-import blogService from '../services/blogs'
+import { voteBlog, removeBlog, addComment } from '../reducers/blogReducer'
 
 const Blog = ({ user }) => {
   const dispatch = useDispatch()
@@ -32,10 +31,7 @@ const Blog = ({ user }) => {
 
   const handleComment = (event) => {
     event.preventDefault()
-    console.log(com)
-    console.log(blog.id)
-    blogService.comment(com, blog.id)
-
+    dispatch(addComment(com, blog.id))
     setCom('')
   }
 
@@ -60,8 +56,8 @@ const Blog = ({ user }) => {
         </div>
       </form >
       <ul>
-        {blog.comments.map(c =>
-          <li>{c}</li>)}
+        {blog.comments.toReversed().map(c =>
+          <li key={Math.floor(Math.random() * 10000)}>{c}</li>)}
       </ul>
     </div >
   )

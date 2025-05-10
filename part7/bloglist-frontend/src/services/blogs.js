@@ -21,21 +21,22 @@ const create = async (newObject) => {
   return response.data
 }
 
-const update = (blog) => {
-  const request = axios.put(`${baseUrl}/${blog.id}`, {
+const update = async (blog) => {
+  const response = await axios.put(`${baseUrl}/${blog.id}`, {
     ...blog,
     likes: blog.likes + 1,
   })
-  return request.then((response) => response.data)
+
+  return response.data
 }
 
-const remove = (id) => {
+const remove = async (id) => {
   const config = {
     headers: { Authorization: token },
   }
 
-  const request = axios.delete(`${baseUrl}/${id}`, config)
-  return request.then((response) => response.data)
+  const response = await axios.delete(`${baseUrl}/${id}`, config)
+  return response.data
 }
 
 
@@ -43,7 +44,6 @@ const comment = async (content, id) => {
   const comment = {
     comment: content
   }
-  console.log(comment)
 
   const response = await axios.post(`${baseUrl}/${id}/comments`, comment)
   return response.data
