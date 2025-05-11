@@ -37,6 +37,20 @@ const calculateExercises = (target: number, days: number[]): Result => {
     }
 }
 
-const target: number = Number(process.argv[2])
-const days: number[] = process.argv.slice(3).map(Number)
-console.log(calculateExercises(target, days))
+for (var i = 2; i < process.argv.length; i++) {
+    if (isNaN(Number(process.argv[i]))) {
+        throw new Error("Function arguments must be numbers")
+    }
+}
+
+try {
+    const target: number = Number(process.argv[2])
+    const days: number[] = process.argv.slice(3).map(Number)
+    console.log(calculateExercises(target, days))
+} catch (error: unknown) {
+    let errorMessage = "Something went wrong."
+    if (error instanceof Error) {
+        errorMessage += " Error: " + error.message
+    }
+    console.log(errorMessage)
+}
