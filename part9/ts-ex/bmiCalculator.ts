@@ -21,6 +21,22 @@ const calculateBmi = (height: number, weight: number): string => {
     }
 }
 
-const height: number = Number(process.argv[2])
-const weight: number = Number(process.argv[3])
-console.log(calculateBmi(height, weight))
+if (process.argv.length !== 4) {
+    throw new Error("Give two numeric arguments")
+}
+
+if (isNaN(Number(process.argv[2])) || isNaN(Number(process.argv[3]))) {
+    throw new Error("Given arguments must be numbers")
+}
+
+try {
+    const height: number = Number(process.argv[2])
+    const weight: number = Number(process.argv[3])
+    console.log(calculateBmi(height, weight))
+} catch (error: unknown) {
+    let errorMessage = "Something went wrong"
+    if (error instanceof Error) {
+        errorMessage += " Error: " + error.message
+    }
+    console.log(errorMessage)
+}

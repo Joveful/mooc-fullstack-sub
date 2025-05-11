@@ -36,6 +36,9 @@ const calculateExercises = (target: number, days: number[]): Result => {
         average: average
     }
 }
+if (process.argv.length < 3) {
+    throw new Error(" Give at least two arguments")
+}
 
 for (var i = 2; i < process.argv.length; i++) {
     if (isNaN(Number(process.argv[i]))) {
