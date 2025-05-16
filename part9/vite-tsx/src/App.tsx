@@ -19,7 +19,7 @@ const Content = ({ courses }: Courses) => {
   return (
     <div>
       {courses.map((c: CourseProps): ReactNode =>
-        <p>{c.name}</p>
+        <p key={c.name}>{c.name} {c.exerciseCount}</p>
       )}
     </div>
   )
