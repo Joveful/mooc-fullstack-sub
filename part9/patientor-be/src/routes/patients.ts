@@ -3,6 +3,7 @@ import { v1 as uuid } from 'uuid';
 import { Response } from 'express';
 import patientsData from '../../data/patients';
 import { NonSensitivePatients } from '../types';
+import toNewPatient from '../utils';
 
 const router = express.Router();
 
@@ -14,13 +15,26 @@ router.get('/', (_req, res: Response<NonSensitivePatients[]>) => {
 });
 
 router.post('/', (req, res) => {
-  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-  const { name, occupation, dateOfBirth, ssn, gender } = req.body;
-  const id = uuid();
-  const patient = { id, name, ssn, dateOfBirth, gender, occupation };
+  try {
 
-  patientsData.push(patient);
-  res.send(patient);
+    //const { name, occupation, dateOfBirth, ssn, gender } = req.body;
+    const newPatientEntry = toNewPatient(req.body);
+    const id = uuid();
+    //const patient = { id, name, ssn, dateOfBirth, gender, occupation };
+    const patient = {
+      id: id,
+      ...newPatientEntry
+    };
+
+    patientsData.push(patient);
+    res.send(patient);
+  } catch (error) {
+    let errorMessage = 'Something went wrong';
+    if (error instanceof Error) {
+      errorMessage += 'Error: ' + errorMessage;
+    }
+    res.status(400).send(errorMessage);
+  }
 });
 
 export default router;
