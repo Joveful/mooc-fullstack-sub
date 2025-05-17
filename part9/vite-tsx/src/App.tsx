@@ -22,7 +22,13 @@ interface CoursePartBackground extends CoursePartBase {
   kind: "background"
 }
 
-type CoursePart = CoursePartBasic | CoursePartGroup | CoursePartBackground;
+interface CoursePartSpecial extends CoursePartBase {
+  description: string,
+  requirements: string[],
+  kind: "special"
+}
+
+type CoursePart = CoursePartBasic | CoursePartGroup | CoursePartBackground | CoursePartSpecial;
 
 const Header = ({ name }: { name: string }) => {
   return (
@@ -53,8 +59,17 @@ const Content = ({ courses }: { courses: CoursePart[] }) => {
             return (
               <div>
                 <p><b>{c.name} {c.exerciseCount}</b><br />
+                  <i>{c.description}</i><br />
                   submit to {c.backgroundMaterial}</p>
               </div>)
+          case 'special':
+            return (
+              <div>
+                <p><b>{c.name} {c.exerciseCount}</b><br />
+                  <i>{c.description}</i><br />
+                  requirements: {c.requirements.map((r: string) => r + ' ')}</p>
+              </div>
+            )
           default:
             break;
         }
@@ -104,6 +119,13 @@ const App = () => {
       exerciseCount: 10,
       description: "a hard part",
       kind: "basic",
+    },
+    {
+      name: "Backend development",
+      exerciseCount: 21,
+      description: "Typing the backend",
+      requirements: ["nodejs", "jest"],
+      kind: "special"
     },
   ];
 
