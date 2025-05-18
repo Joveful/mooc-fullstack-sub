@@ -86,7 +86,7 @@ function App() {
       </form>
       <h1>Diary entries</h1>
       {entries.map((e) =>
-        <div>
+        <div key={e.id}>
           <h2>{e.date}</h2>
           <p>visibility: {e.visibility}<br />weather: {e.weather}</p>
         </div>)}
