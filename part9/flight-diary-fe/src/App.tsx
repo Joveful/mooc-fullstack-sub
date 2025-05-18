@@ -17,11 +17,11 @@ const Notification = ({ message }: { message: string }) => {
 
 function App() {
   const [entries, setEntries] = useState<DiaryEntry[]>([])
-  const [date, setDate] = useState('')
-  const [visibility, setVisibility] = useState('')
-  const [weather, setWeather] = useState('')
-  const [comment, setComment] = useState('')
-  const [notificationMessage, setNotificationMessage] = useState('')
+  const [date, setDate] = useState<string>('')
+  const [visibility, setVisibility] = useState<string>('')
+  const [weather, setWeather] = useState<string>('')
+  const [comment, setComment] = useState<string>('')
+  const [notificationMessage, setNotificationMessage] = useState<string>('')
 
   useEffect(() => {
     getAllEntries().then(data => {
