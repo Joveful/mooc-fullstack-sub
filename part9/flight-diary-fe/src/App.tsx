@@ -1,13 +1,27 @@
 import { useState, useEffect } from 'react';
 import type { DiaryEntry, NewDiaryEntry } from './types';
-import { createEntry, getAllEntries } from './services/diaryServie';
+import { createEntry, getAllEntries } from './services/diaryService';
+import type { AxiosError } from 'axios';
+
+const Notification = ({ message }: { message: string }) => {
+  const notificationStyle = {
+    color: 'red'
+  }
+
+  return (
+    <div style={notificationStyle}>
+      {message}
+    </div>
+  )
+}
 
 function App() {
-  const [entries, setEntries] = useState<DiaryEntry[]>([]);
+  const [entries, setEntries] = useState<DiaryEntry[]>([])
   const [date, setDate] = useState('')
   const [visibility, setVisibility] = useState('')
   const [weather, setWeather] = useState('')
   const [comment, setComment] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState('')
 
   useEffect(() => {
     getAllEntries().then(data => {
@@ -17,26 +31,34 @@ function App() {
 
   const entryCreation = (event: React.SyntheticEvent) => {
     event.preventDefault()
-
     const newEntry: NewDiaryEntry = {
       date: date,
       visibility: visibility,
       weather: weather,
       comment: comment
     }
-    createEntry(newEntry).then(data => {
-      setEntries(entries.concat(data))
+
+    createEntry(newEntry).then((data: DiaryEntry | AxiosError | string) => {
+      if ((data as DiaryEntry).weather !== undefined) {
+        setEntries(entries.concat((data as DiaryEntry)))
+      } else if ("response" in (data as AxiosError)) {
+        setNotificationMessage(String((data as AxiosError).response.data))
+        setTimeout(() => {
+          setNotificationMessage('')
+        }, 5000)
+      } else {
+        console.log(data)
+      }
     })
 
     setDate('')
-    setVisibility('')
-    setWeather('')
     setComment('')
   }
 
   return (
     <div>
       <h1>Add diary entry</h1>
+      <Notification message={notificationMessage} />
       <form onSubmit={entryCreation}>
         date<input type='date' value={date} onChange={(event) =>
           setDate(event.target.value)} /><br />
@@ -54,7 +76,7 @@ function App() {
           setWeather('rainy')} />
         cloudy<input type='radio' name='weather' onChange={() =>
           setWeather('cloudy')} />
-        poor<input type='radio' name='weather' onChange={() =>
+        stormy<input type='radio' name='weather' onChange={() =>
           setWeather('stormy')} />
         windy<input type='radio' name='weather' onChange={() =>
           setWeather('windy')} /><br />
