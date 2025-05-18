@@ -42,7 +42,7 @@ function App() {
       if ((data as DiaryEntry).weather !== undefined) {
         setEntries(entries.concat((data as DiaryEntry)))
       } else if ("response" in (data as AxiosError)) {
-        setNotificationMessage(String((data as AxiosError).response.data))
+        setNotificationMessage(String((data as AxiosError).response?.data))
         setTimeout(() => {
           setNotificationMessage('')
         }, 5000)
