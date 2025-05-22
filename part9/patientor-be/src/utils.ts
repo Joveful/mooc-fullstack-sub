@@ -1,4 +1,5 @@
-import { Gender, NewPatientEntry } from "./types";
+import { EntryType, Gender, HealthCheckRating, NewPatientEntry } from "./types";
+
 import { z } from 'zod';
 
 export const NewEntrySchema = z.object({
@@ -23,7 +24,8 @@ export const NewPatientSchema = z.object({
   ssn: z.string().optional(),
   gender: z.nativeEnum(Gender),
   occupation: z.string(),
-  dateOfBirth: z.string().date().optional()
+  dateOfBirth: z.string().date().optional(),
+  entries: z.array(NewEntrySchema)
 });
 
 export const toNewPatient = (object: unknown): NewPatientEntry => {

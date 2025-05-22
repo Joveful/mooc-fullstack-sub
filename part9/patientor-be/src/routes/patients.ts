@@ -14,6 +14,12 @@ router.get('/', (_req, res: Response<NonSensitivePatients[]>) => {
   res.send(patientsToReturn);
 });
 
+router.get('/:id', (req, res: Response<Patient>) => {
+  const id = req.params.id;
+  const patientToReturn = patientsData.find((p) => String(p.id) === id);
+  res.send(patientToReturn);
+});
+
 const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
   try {
     NewPatientSchema.parse(req.body);
@@ -35,6 +41,7 @@ router.post('/', newPatientParser, (req: Request<unknown, unknown, NewPatientEnt
   const id = uuid();
   const patient = {
     id: id,
+    entries: [],
     ...(req.body)
   };
 
