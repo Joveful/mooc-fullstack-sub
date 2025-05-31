@@ -1,21 +1,74 @@
 import { useParams } from "react-router-dom";
-import { Entry, Patient, Diagnosis } from "../../types";
+import { Entry, Patient } from "../../types";
 import patientService from "../../services/patients";
-import diagnosisService from "../../services/diagnoses";
+//import diagnosisService from "../../services/diagnoses";
 import { useEffect, useState } from "react";
+
+import WorkIcon from '@mui/icons-material/Work';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+
+const HospitalEntry = ({ entry }: { entry: Entry }) => {
+  console.log(entry);
+  return (
+    <div><p>
+      hospital{entry.date} <LocalHospitalIcon /><br />
+      <i>{entry.description}</i><br />
+      diagnosed by: {entry.specialist}
+    </p></div>
+  );
+};
+
+const OccupationalHealthcareEntry = ({ entry }: { entry: Entry }) => {
+  console.log(entry);
+  return (
+    <div><p>
+      occupation{entry.date} <WorkIcon /><br />
+      <i>{entry.description}</i><br />
+      diagnosed by: {entry.specialist}
+    </p></div>
+  );
+};
+
+const HealthCheckEntry = ({ entry }: { entry: Entry }) => {
+  console.log(entry);
+  return (
+    <div><p>
+      health{entry.date} <MedicalServicesIcon /><br />
+      <i>{entry.description}</i><br />
+      diagnosed by: {entry.specialist}</p>
+    </div>
+  );
+};
+
+const assertNever = (entry: never): never => {
+  throw new Error('Unexpected object: ' + entry);
+};
+
+const EntryDetails = ({ entry }: { entry: Entry }) => {
+  switch (entry.type) {
+    case 'Hospital':
+      return <HospitalEntry entry={entry} />;
+    case 'OccupationalHealthcare':
+      return <OccupationalHealthcareEntry entry={entry} />;
+    case 'HealthCheck':
+      return <HealthCheckEntry entry={entry} />;
+    default: return assertNever(entry);
+  }
+};
 
 const PatientPage = () => {
   const id = String(useParams().id);
   const [patient, setPatient] = useState<Patient>();
-  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+  //const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
 
   useEffect(() => {
     const fetchPatient = async (id: string) => {
       const p = await patientService.getPatientById(id);
       setPatient(p);
 
-      const d = await diagnosisService.getAll();
-      setDiagnoses(d);
+      //const d = await diagnosisService.getAll();
+      //setDiagnoses(d);
     };
     void fetchPatient(id);
   }, [id]);
@@ -31,11 +84,7 @@ const PatientPage = () => {
       <h3>entries</h3>
       {patient?.entries?.map((e: Entry) =>
         <div key={e.id}>
-          {e.date} <i>{e.description}</i>
-          <ul>
-            {e.diagnosisCodes?.map((c: string) =>
-              <li key={c}>{c} {diagnoses?.find((d) => d.code === c)?.name}</li>)}
-          </ul>
+          {EntryDetails({ entry: e })}
         </div>)}
     </div>
   );
