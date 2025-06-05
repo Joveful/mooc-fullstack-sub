@@ -1,0 +1,12 @@
+Script started on 2025-06-05 16:13:14+03:00 [TERM="tmux-256color" TTY="/dev/pts/4" COLUMNS="159" LINES="36"]
+[?2004h[32;1mjori@fedora[0m:[32;1m~/fullstack/mooc-fullstack-sub/part12/part12-containers-applications/script-answers[0m$[0m docker run -it ubuntu bash
+[?2004l[?2004h]0;root@ef7870160f9e: /root@ef7870160f9e:/# ls  mkdir /usr/src/app
+[?2004l[?2004h]0;root@ef7870160f9e: /root@ef7870160f9e:/# mkdir /usr/src/app/a index.js[1P[1P[1P[1P[1P[1@t[1@o[1@u[1@c[1@h
+[?2004l[?2004h]0;root@ef7870160f9e: /root@ef7870160f9e:/# [Ktouch /usr/src/app/index.js[9Pmkdir /usr/src/app[1P[1P[1P[1P[1P[1@l[1@s
+[?2004lindex.js
+[?2004h]0;root@ef7870160f9e: /root@ef7870160f9e:/# exit
+[?2004lexit
+[?2004h[32;1mjori@fedora[0m:[32;1m~/fullstack/mooc-fullstack-sub/part12/part12-containers-applications/script-answers[0m$[0m exit
+[?2004lexit
+
+Script done on 2025-06-05 16:13:57+03:00 [COMMAND_EXIT_CODE="0"]
