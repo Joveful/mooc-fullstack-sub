@@ -62,3 +62,7 @@ typings/
 
 # HTTP request tests
 requests/
+
+# storages
+mongo_data/
+redis_data/
