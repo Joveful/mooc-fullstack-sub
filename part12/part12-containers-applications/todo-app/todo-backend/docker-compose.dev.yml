@@ -14,9 +14,9 @@ services:
     image: redis:bookworm
     ports: 
       - 3455:6379
+    command: ['redis-server', '--appendonly', 'yes']
     volumes:
       - ./redis_data:/data
 
 volumes:
   mongo_data:
-  redis_data:
