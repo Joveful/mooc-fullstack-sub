@@ -34,8 +34,6 @@ services:
       - REDIS_URL=redis://todo-backend-redis:6379
     volumes:
       - ./:/usr/src/app
-  debug-helper:
-    image: busybox
 
 volumes:
   mongo_data:
