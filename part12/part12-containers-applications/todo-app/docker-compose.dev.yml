@@ -1,0 +1,20 @@
+services:
+  app:
+    image: todo-app-dev
+    build:
+      context: ./todo-frontend/
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./todo-frontend/:/usr/src/app
+    ports:
+     - 5173:5173
+    container_name: todo-app-dev
+  nginx:
+    image: nginx:1.20.1
+    ports:
+      - 8080:80
+    depends_on:
+      - app
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    container_name: reverse-proxy
