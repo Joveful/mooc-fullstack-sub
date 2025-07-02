@@ -29,15 +29,25 @@ const BlogList = () => {
   }
 
   return (
-    <div>
+    <div className="max-w-2xl mx-auto mt-8 p-4 bg-gray-50 rounded-lg shadow">
       <Toggleable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Toggleable>
-      {blogs.map((blog) => (
-        <div key={blog.id} className="blogstyle">
-          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-        </div>
-      ))}
+      <div className="mt-8 space-y-4">
+        {blogs.map((blog) => (
+          <div
+            key={blog.id}
+            className="blogstyle bg-white rounded-md shadow hover:shadow-lg transition-shadow px-4 py-3"
+          >
+            <Link
+              to={`/blogs/${blog.id}`}
+              className="text-lg font-semibold text-blue-700 hover:underline"
+            >
+              {blog.title}
+            </Link>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

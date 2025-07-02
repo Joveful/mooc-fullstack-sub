@@ -19,12 +19,14 @@ const User = () => {
   }
 
   return (
-    <div>
-      <h2>{user.name}</h2>
-      <h3>added blogs</h3>
-      <ul>
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-3xl font-bold text-gray-800 mb-4">{user.name}</h2>
+      <h3 className="text-xl font-semibold text-gray-600 mb-3">added blogs</h3>
+      <ul className="space-y-2">
         {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <li key={blog.id} className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors">
+            {blog.title}
+          </li>
         ))}
       </ul>
     </div>

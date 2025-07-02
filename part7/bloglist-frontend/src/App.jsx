@@ -44,30 +44,46 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-800 text-white">
       {user === null ? (
         <LoginForm />
       ) : (
         <div>
           <Router>
-            <div style={navbar}>
-              <Link style={padding} to="/">
-                blogs
-              </Link>
-              <Link style={padding} to="/users">
-                users
-              </Link>
-              <em>{user.name} logged in</em>
-              <button onClick={handleLogout}>logout</button>
-            </div>
-            <Notification />
-            <h1>blog app</h1>
-            <Routes>
-              <Route path="/" element={<BlogList />} />
-              <Route path="/users" element={<UserList />} />
-              <Route path="/users/:id" element={<User />} />
-              <Route path="/blogs/:id" element={<Blog user={user} />} />
-            </Routes>
+            <nav className="bg-gray-900 shadow-lg">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between h-16">
+                  <div className="flex items-center space-x-4">
+                    <Link to="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                      blogs
+                    </Link>
+                    <Link to="/users" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                      users
+                    </Link>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span className="text-gray-300 italic">{user.name} logged in</span>
+                    <button
+                      onClick={handleLogout}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                    >
+                      logout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </nav>
+
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <Notification />
+              <h1 className="text-4xl font-bold text-center mb-8">blog app</h1>
+              <Routes>
+                <Route path="/" element={<BlogList />} />
+                <Route path="/users" element={<UserList />} />
+                <Route path="/users/:id" element={<User />} />
+                <Route path="/blogs/:id" element={<Blog user={user} />} />
+              </Routes>
+            </main>
           </Router>
         </div>
       )}

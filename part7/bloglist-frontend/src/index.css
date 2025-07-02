@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 .success {
   color: green;
   background: lightgrey;
