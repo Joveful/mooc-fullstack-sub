@@ -124,14 +124,15 @@ const typeDefs = `
     title: String!
     published: Int!
     author: Author!
-    id: ID!
     genres: [String!]!
+    id: ID!
   }
 
   type Author {
     name: String!
     born: Int
     bookCount: Int!
+    id: ID!
   }
 
   type User {
@@ -180,6 +181,7 @@ const resolvers = {
     authorCount: () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
       const everyBook = await Book.find({})
+      console.log(everyBook)
       if (!args.author && !args.genre) {
         return everyBook
       }
@@ -270,12 +272,9 @@ const resolvers = {
       }
 
       const author = await Author.findOne({ name: args.name })
-      if (!author) {
-        return null
-      }
 
-      author.born = args.setBornTo
       try {
+        author.born = args.setBornTo
         await author.save()
       } catch (error) {
         throw new GraphQLError('editing birth year failed', {
