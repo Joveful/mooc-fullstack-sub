@@ -180,8 +180,7 @@ const resolvers = {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
-      const everyBook = await Book.find({})
-      console.log(everyBook)
+      const everyBook = await Book.find({}).populate('author')
       if (!args.author && !args.genre) {
         return everyBook
       }
@@ -205,14 +204,9 @@ const resolvers = {
       const ret = everyAuthor.map((author) => ({
         name: author.name,
         born: author.born,
-        bookCount: () => {
-          let count = 0
-          for (const b of books) {
-            if (b.author === author.name) {
-              count += 1
-            }
-          }
-          return count
+        bookCount: async () => {
+          const books = await Book.find({ author: { _id: author._id } })
+          return books.length
         }
       }))
       return ret
@@ -247,6 +241,7 @@ const resolvers = {
           })
         }
       }
+
       const book = new Book({ ...args, author: author._id.toString() })
       try {
         await book.save()
@@ -259,7 +254,7 @@ const resolvers = {
           }
         })
       }
-      return book
+      return book.populate('author')
     },
     editAuthor: async (root, args, context) => {
       const currentUser = context.currentUser
@@ -338,7 +333,7 @@ startStandaloneServer(server, {
         auth.substring(7), process.env.JWT_SECRET
       )
       const currentUser = await User
-        .findById(decodedToken.id).populate('favoriteGenre')
+        .findById(decodedToken.id)
       return { currentUser }
     }
   },
