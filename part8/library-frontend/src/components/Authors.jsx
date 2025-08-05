@@ -5,7 +5,7 @@ import { ALL_AUTHORS, EDIT_AUTHOR } from "../queries";
 
 
 const Authors = (props) => {
-  const [name, setName] = useState('')
+  const [name, setName] = useState(null)
   const [newDob, setNewDob] = useState('')
 
   const [changeDob] = useMutation(EDIT_AUTHOR, {
@@ -29,9 +29,10 @@ const Authors = (props) => {
     event.preventDefault()
 
     const numDob = Number(newDob)
-    changeDob({ variables: { name, setBornTo: numDob } })
+    console.log(name)
+    changeDob({ variables: { name: name.value, setBornTo: numDob } })
 
-    setName('')
+    setName(null)
     setNewDob('')
   }
 
@@ -61,7 +62,7 @@ const Authors = (props) => {
           <Select
             options={options}
             value={name}
-            onChange={(e) => setName(e.value)}
+            onChange={(e) => setName(e)}
           />
         </div>
         <div>
