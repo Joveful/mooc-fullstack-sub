@@ -1,14 +1,14 @@
-import { useQuery } from "@apollo/client";
-import { ALL_BOOKS } from "../queries";
-import { useState } from "react";
+import { useQuery } from "@apollo/client"
+import { ALL_BOOKS } from "../queries"
 
-
-const Books = (props) => {
+const Recommended = ({ show, user }) => {
+  console.log(user)
+  const favoriteGenre = user ? user.favoriteGenre : null
   const result = useQuery(ALL_BOOKS, {
-    variables: { genre: null }
+    variables: { genre: favoriteGenre }
   })
 
-  if (!props.show) {
+  if (!show) {
     return null
   }
 
@@ -17,12 +17,11 @@ const Books = (props) => {
   }
 
   const books = result.data.allBooks
-  const genres = books.map(b => [b.genres]).flat(2)
 
   return (
     <div>
-      <h2>books</h2>
-
+      <h2>Recommended books</h2>
+      Recommended genre is <b>{favoriteGenre}</b>
       <table>
         <tbody>
           <tr>
@@ -39,18 +38,9 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
-      {genres.map(g => (
-        <>
-          <button
-            onClick={() => result.refetch({ genre: g })}
-          >{g}</button>
-        </>
-      ))}
-      <>
-        <button onClick={() => result.refetch({ genre: null })}>all genres</button>
-      </>
+
     </div>
   )
 }
 
-export default Books
+export default Recommended

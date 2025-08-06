@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
 import Notify from "./components/Notify";
+import { GET_USER } from "./queries";
+import Recommended from "./components/Recommended";
 
 const App = () => {
   const [page, setPage] = useState("authors");
@@ -18,6 +20,8 @@ const App = () => {
       setToken(token)
     }
   }, [token])
+
+  const user = useQuery(GET_USER).data.me
 
   const logout = () => {
     setToken(null)
@@ -33,6 +37,7 @@ const App = () => {
         {token ? (
           <>
             <button onClick={() => setPage("add")}>add book</button>
+            <button onClick={() => setPage("recommended")}>recommended</button>
             <button onClick={logout}>logout</button>
           </>
         ) : (
@@ -43,6 +48,7 @@ const App = () => {
       <Notify errorMessage={errorMessage} />
       <Authors show={page === "authors"} />
       <Books show={page === "books"} />
+      <Recommended user={user} show={page === "recommended"} />
       <NewBook show={page === "add"} setError={setErrorMessage} />
       <LoginForm show={page === "login"} setToken={setToken} setPage={setPage} setError={setErrorMessage} />
     </div>
