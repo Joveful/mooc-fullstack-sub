@@ -2,7 +2,6 @@ import { useQuery } from "@apollo/client"
 import { ALL_BOOKS } from "../queries"
 
 const Recommended = ({ show, user }) => {
-  console.log(user)
   const favoriteGenre = user ? user.favoriteGenre : null
   const result = useQuery(ALL_BOOKS, {
     variables: { genre: favoriteGenre }
@@ -38,7 +37,6 @@ const Recommended = ({ show, user }) => {
           ))}
         </tbody>
       </table>
-
     </div>
   )
 }
