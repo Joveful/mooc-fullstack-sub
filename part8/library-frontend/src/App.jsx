@@ -21,7 +21,13 @@ const App = () => {
     }
   }, [token])
 
-  const user = useQuery(GET_USER).data.me
+  const userQuery = useQuery(GET_USER)
+  if (userQuery.loading) {
+    return (
+      <div>loading...</div>
+    )
+  }
+  const user = userQuery.data.me
 
   const logout = () => {
     setToken(null)
