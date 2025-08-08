@@ -17,7 +17,8 @@ const NewBook = ({ show, setError }) => {
     },
     update: (cache, response) => {
       updateCache(cache, { query: ALL_BOOKS }, response.data.addBook)
-    }
+    },
+    refetchQueries: [{ ALL_BOOKS }]
   })
 
   if (!show) {

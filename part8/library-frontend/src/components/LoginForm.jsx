@@ -1,10 +1,11 @@
-import { useMutation } from "@apollo/client"
+import { useApolloClient, useMutation } from "@apollo/client"
 import { useEffect, useState } from "react"
 import { LOGIN, GET_USER } from "../queries"
 
 const LoginForm = ({ setToken, show, setPage, setError }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const client = useApolloClient()
 
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
@@ -17,8 +18,9 @@ const LoginForm = ({ setToken, show, setPage, setError }) => {
       const token = result.data.login.value
       setToken(token)
       localStorage.setItem('library-user-token', token)
+      client.resetStore()
     }
-  }, [result.data])
+  }, [result.data, client])
 
   if (!show) {
     return null
