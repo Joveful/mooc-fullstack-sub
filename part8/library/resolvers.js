@@ -35,6 +35,7 @@ const resolvers = {
       return everyBook.filter(byAuthor).filter(byGenre)
     },
     allAuthors: async () => {
+      console.log('All authors')
       const everyAuthor = await Author.find({})
       const ret = everyAuthor.map((author) => ({
         name: author.name,
