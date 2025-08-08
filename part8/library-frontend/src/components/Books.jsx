@@ -5,7 +5,6 @@ import { ALL_BOOKS } from "../queries";
 const Books = (props) => {
   const result = useQuery(ALL_BOOKS, {
     variables: { genre: null },
-    fetchPolicy: 'no-cache'
   })
   const allGenres = useQuery(ALL_BOOKS)
 
