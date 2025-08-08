@@ -1,23 +1,25 @@
 import { useQuery } from "@apollo/client";
 import { ALL_BOOKS } from "../queries";
-import { useState } from "react";
 
 
 const Books = (props) => {
   const result = useQuery(ALL_BOOKS, {
     variables: { genre: null }
   })
+  const allGenres = useQuery(ALL_BOOKS)
 
   if (!props.show) {
     return null
   }
 
-  if (result.loading) {
+  if (result.loading || allGenres.loading) {
     return <div>loading...</div>
   }
 
   const books = result.data.allBooks
-  const genres = books.map(b => [b.genres]).flat(2)
+
+  const genres = allGenres.data.allBooks.map(b => [b.genres]).flat(2)
+  const genresDistinct = [...new Set(genres)]
 
   return (
     <div>
@@ -39,7 +41,7 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
-      {genres.map(g => (
+      {genresDistinct.map(g => (
         <>
           <button
             onClick={() => result.refetch({ genre: g })}
