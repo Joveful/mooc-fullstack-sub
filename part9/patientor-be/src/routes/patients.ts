@@ -2,8 +2,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import { v1 as uuid } from 'uuid';
 import { z } from 'zod';
 import patientsData from '../../data/patients';
-import { NewPatientEntry, NonSensitivePatients, Patient } from '../types';
-import { NewPatientSchema } from '../utils';
+import { Entry, EntryWithoutId, NewPatientEntry, NonSensitivePatients, Patient } from '../types';
+import { NewEntrySchema, NewPatientSchema } from '../utils';
 
 const router = express.Router();
 
@@ -47,6 +47,31 @@ router.post('/', newPatientParser, (req: Request<unknown, unknown, NewPatientEnt
 
   patientsData.push(patient);
   res.send(patient);
+});
+
+const newEntryParser = (req: Request, _res: Response, next: NextFunction) => {
+  try {
+    NewEntrySchema.parse(req.body);
+    next();
+  } catch (error: unknown) {
+    next(error);
+  }
+};
+
+//TODO: fix patientToReturn return
+router.post('/:id/entries', newEntryParser, (req: Request<{ id: string }, unknown, EntryWithoutId>, res: Response<Entry>) => {
+  const eid = uuid();
+  const entry = {
+    id: eid,
+    ...(req.body)
+  };
+  const patientToReturn = patientsData.find((p) => String(p.id) === req.params.id);
+  if (patientToReturn) {
+    const index = patientsData.indexOf(patientToReturn);
+    patientsData[index].entries?.push(entry);
+    console.log(patientsData[index]);
+  }
+  res.send(entry);
 });
 
 router.use(errorMiddleware);
