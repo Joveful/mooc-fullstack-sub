@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { DataTypes, Model, QueryTypes, Sequelize } from 'sequelize';
 import express from 'express';
 const app = express();
+app.use(express.json());
 
 dotenv.config();
 
@@ -44,7 +45,7 @@ app.get('/api/blogs', async (req, res) => {
 });
 
 app.post('/api/blogs', async (req, res) => {
-  console.log(req);
+  console.log(req.body);
   try {
     const blog = await Blog.create(req.body);
     res.json(blog);
@@ -58,6 +59,19 @@ app.get('/api/blogs/:id', async (req, res) => {
   if (blog) {
     res.json(blog);
   } else {
+    res.status(400).end();
+  }
+});
+
+app.delete('/api/blogs/:id', async (req, res) => {
+  try {
+    await Blog.destroy({
+      where: {
+        id: req.params.id,
+      }
+    });
+    res.status(204);
+  } catch (error) {
     res.status(400).end();
   }
 });
