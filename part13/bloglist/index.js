@@ -9,6 +9,22 @@ app.use(express.json());
 
 app.use('/api/blogs', blogsRouter);
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+  console.log(error.name);
+  if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeDatabaseError') {
+    response.status(400).send({ error: 'bad input' });
+  }
+
+  if (error.name === 'ReferenceError') {
+    response.status(400).send({ error: 'bad blog id' });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
+
 const start = async () => {
   await connectToDatabase();
   app.listen(PORT, () => {
