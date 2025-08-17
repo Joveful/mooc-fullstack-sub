@@ -5,7 +5,7 @@ const { PORT } = require('./util/config.js');
 const { connectToDatabase } = require('./util/db.js');
 const blogsRouter = require('./controllers/blogs');
 
-express.json();
+app.use(express.json());
 
 app.use('/api/blogs', blogsRouter);
 
