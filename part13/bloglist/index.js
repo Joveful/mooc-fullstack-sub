@@ -4,10 +4,12 @@ const app = express();
 const { PORT } = require('./util/config.js');
 const { connectToDatabase } = require('./util/db.js');
 const blogsRouter = require('./controllers/blogs');
+const usersRouter = require('./controllers/users');
 
 app.use(express.json());
 
 app.use('/api/blogs', blogsRouter);
+app.use('/api/users', usersRouter);
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);

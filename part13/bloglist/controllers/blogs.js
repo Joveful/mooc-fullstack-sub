@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res, next) => {
-  console.log(req.body);
   try {
     const blog = await Blog.create(req.body);
     res.json(blog);
