@@ -3,23 +3,25 @@ const app = express();
 
 const { PORT } = require('./util/config.js');
 const { connectToDatabase } = require('./util/db.js');
+
 const blogsRouter = require('./controllers/blogs');
 const usersRouter = require('./controllers/users');
+const loginRouter = require('./controllers/login');
 
 app.use(express.json());
 
 app.use('/api/blogs', blogsRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/login', loginRouter);
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
-  console.log(error.name);
   if (error.name === 'SequelizeValidationError' || error.name === 'SequelizeDatabaseError') {
-    response.status(400).send({ error: 'bad input' });
+    response.status(400).send({ error: error.errors.map(e => e.message) });
   }
 
   if (error.name === 'ReferenceError') {
-    response.status(400).send({ error: 'bad blog id' });
+    response.status(400).send({ error: 'malformatted input' });
   }
 
   next(error);
