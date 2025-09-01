@@ -56,11 +56,16 @@ router.put('/:id', blogFinder, async (req, res, next) => {
   }
 });
 
-router.delete('/:id', blogFinder, async (req, res) => {
-  if (req.blog) {
-    await req.body.destroy();
+router.delete('/:id', blogFinder, tokenExtractor, async (req, res, next) => {
+  try {
+    console.log(req.blog);
+    if (req.blog.userId === req.decodedToken.id) {
+      await req.blog.destroy();
+    }
+    res.status(204).end();
+  } catch (error) {
+    next(error);
   }
-  res.status(204).end();
 });
 
 module.exports = router;
