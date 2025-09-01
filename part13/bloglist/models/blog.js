@@ -22,7 +22,7 @@ Blog.init({
   },
   likes: {
     type: DataTypes.INTEGER
-  }
+  },
 }, {
   sequelize,
   underscored: true,
