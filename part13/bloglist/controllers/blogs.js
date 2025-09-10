@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { Blog, User } = require('../models');
 const { SECRET } = require('../util/config');
 const { Op } = require('sequelize');
+const { tokenExtractor } = require('../util/middleware');
 
 const blogFinder = async (req, res, next) => {
   req.blog = await Blog.findByPk(req.params.id);
@@ -43,20 +44,6 @@ router.get('/', async (req, res) => {
   res.json(blogs);
 });
 
-const tokenExtractor = (req, res, next) => {
-  const authorization = req.get('authorization');
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    try {
-      req.decodedToken = jwt.verify(authorization.substring(7), SECRET);
-    } catch {
-      return res.status(401).json({ error: 'invalid token' })
-    }
-  } else {
-    return res.status(401).json({ error: 'missing token' })
-  }
-  next();
-};
-
 router.post('/', tokenExtractor, async (req, res, next) => {
   try {
     const user = await User.findByPk(req.decodedToken.id);
@@ -87,7 +74,6 @@ router.put('/:id', blogFinder, async (req, res, next) => {
 
 router.delete('/:id', blogFinder, tokenExtractor, async (req, res, next) => {
   try {
-    console.log(req.blog);
     if (req.blog.userId === req.decodedToken.id) {
       await req.blog.destroy();
     }
