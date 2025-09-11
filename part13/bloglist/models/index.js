@@ -7,5 +7,7 @@ Blog.belongsTo(User);
 
 User.belongsToMany(Blog, { through: Readinglist, as: 'readings' });
 Blog.belongsToMany(User, { through: Readinglist });
+Readinglist.belongsTo(Blog);
+Blog.hasMany(Readinglist);
 
 module.exports = { Blog, User, Readinglist };

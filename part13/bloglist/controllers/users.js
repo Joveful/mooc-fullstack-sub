@@ -32,14 +32,30 @@ router.post('/', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
+    let where = { id: req.params.id };
+
+    if (req.query.read) {
+      where = {
+        ...where,
+        read: req.query.read
+      }
+    }
+
     const user = await User.findOne({
-      where: { id: req.params.id },
+      where,
       attributes: { exclude: ['id', 'createdAt', 'updatedAt'] },
       include: [
         {
           model: Blog,
           as: 'readings',
-          attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] },
+          attributes: { exclude: ['userId', 'createdAt', 'updatedAt', 'readinglist'] },
+          through: {
+            attributes: []
+          },
+          include: {
+            model: Readinglist,
+            attributes: { exclude: ['blogId', 'userId'] }
+          }
         },
       ]
     });
