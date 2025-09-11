@@ -32,17 +32,16 @@ router.post('/', async (req, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   try {
-    let where = { id: req.params.id };
+    let where = {};
 
     if (req.query.read) {
       where = {
-        ...where,
         read: req.query.read
       }
     }
 
     const user = await User.findOne({
-      where,
+      where: { id: req.params.id },
       attributes: { exclude: ['id', 'createdAt', 'updatedAt'] },
       include: [
         {
@@ -54,6 +53,7 @@ router.get('/:id', async (req, res, next) => {
           },
           include: {
             model: Readinglist,
+            where,
             attributes: { exclude: ['blogId', 'userId'] }
           }
         },
