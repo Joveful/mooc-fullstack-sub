@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Entry, Patient } from "../../types";
+import { Entry, HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry, Patient } from "../../types";
 import patientService from "../../services/patients";
 //import diagnosisService from "../../services/diagnoses";
 import { useEffect, useState } from "react";
@@ -7,35 +7,37 @@ import { useEffect, useState } from "react";
 import WorkIcon from '@mui/icons-material/Work';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import { Button } from '@mui/material';
+import AddEntryForm from "./AddEntryForm";
 
-const HospitalEntry = ({ entry }: { entry: Entry }) => {
-  console.log(entry);
+const HospitalEntryComponent = ({ entry }: { entry: HospitalEntry }) => {
   return (
     <div><p>
-      hospital{entry.date} <LocalHospitalIcon /><br />
+      {entry.date} <LocalHospitalIcon /><br />
       <i>{entry.description}</i><br />
       diagnosed by: {entry.specialist}
     </p></div>
   );
 };
 
-const OccupationalHealthcareEntry = ({ entry }: { entry: Entry }) => {
+const OccupationalHealthcareEntryComponent = ({ entry }: { entry: OccupationalHealthcareEntry }) => {
   console.log(entry);
   return (
     <div><p>
-      occupation{entry.date} <WorkIcon /><br />
+      {entry.date} <WorkIcon /><br />
       <i>{entry.description}</i><br />
+      {entry.employerName}
       diagnosed by: {entry.specialist}
     </p></div>
   );
 };
 
-const HealthCheckEntry = ({ entry }: { entry: Entry }) => {
-  console.log(entry);
+const HealthCheckEntryComponent = ({ entry }: { entry: HealthCheckEntry }) => {
   return (
     <div><p>
-      health{entry.date} <MedicalServicesIcon /><br />
+      {entry.date} <MedicalServicesIcon /><br />
       <i>{entry.description}</i><br />
+      {entry.healthCheckRating}<br />
       diagnosed by: {entry.specialist}</p>
     </div>
   );
@@ -48,11 +50,11 @@ const assertNever = (entry: never): never => {
 const EntryDetails = ({ entry }: { entry: Entry }) => {
   switch (entry.type) {
     case 'Hospital':
-      return <HospitalEntry entry={entry} />;
+      return <HospitalEntryComponent entry={entry} />;
     case 'OccupationalHealthcare':
-      return <OccupationalHealthcareEntry entry={entry} />;
+      return <OccupationalHealthcareEntryComponent entry={entry} />;
     case 'HealthCheck':
-      return <HealthCheckEntry entry={entry} />;
+      return <HealthCheckEntryComponent entry={entry} />;
     default: return assertNever(entry);
   }
 };
@@ -73,7 +75,6 @@ const PatientPage = () => {
     void fetchPatient(id);
   }, [id]);
 
-  //console.log(patient?.entries[0]);
 
   return (
     <div>
@@ -81,11 +82,14 @@ const PatientPage = () => {
       gender: {patient?.gender}<br />
       ssn: {patient?.ssn}<br />
       occupation: {patient?.occupation}
+      <h3>Add new entry</h3>
+      <AddEntryForm />
       <h3>entries</h3>
       {patient?.entries?.map((e: Entry) =>
         <div key={e.id}>
           {EntryDetails({ entry: e })}
         </div>)}
+      <Button variant="contained">Add new entry</Button>
     </div>
   );
 };
