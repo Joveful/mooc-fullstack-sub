@@ -58,18 +58,16 @@ const newEntryParser = (req: Request, _res: Response, next: NextFunction) => {
   }
 };
 
-//TODO: fix patientToReturn return
 router.post('/:id/entries', newEntryParser, (req: Request<{ id: string }, unknown, EntryWithoutId>, res: Response<Entry>) => {
-  const eid = uuid();
+  const id = uuid();
   const entry = {
-    id: eid,
+    id: id,
     ...(req.body)
   };
   const patientToReturn = patientsData.find((p) => String(p.id) === req.params.id);
   if (patientToReturn) {
     const index = patientsData.indexOf(patientToReturn);
     patientsData[index].entries?.push(entry);
-    console.log(patientsData[index]);
   }
   res.send(entry);
 });
