@@ -2,12 +2,12 @@ import { useParams } from "react-router-dom";
 import { Entry, EntryWithoutId, HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry, Patient } from "../../types";
 import patientService from "../../services/patients";
 //import diagnosisService from "../../services/diagnoses";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import WorkIcon from '@mui/icons-material/Work';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import { Button } from '@mui/material';
+import { Alert } from '@mui/material';
 import AddEntryForm from "./AddEntryForm";
 import axios from "axios";
 
@@ -64,15 +64,12 @@ const EntryDetails = ({ entry }: { entry: Entry }) => {
 const PatientPage = () => {
   const id = String(useParams().id);
   const [patient, setPatient] = useState<Patient>();
-  //const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+  const [error, setError] = useState<string>();
 
   useEffect(() => {
     const fetchPatient = async (id: string) => {
       const p = await patientService.getPatientById(id);
       setPatient(p);
-
-      //const d = await diagnosisService.getAll();
-      //setDiagnoses(d);
     };
     void fetchPatient(id);
   }, [id]);
@@ -83,8 +80,21 @@ const PatientPage = () => {
       await patientService.createEntry(values, id);
       const p = await patientService.getPatientById(id);
       setPatient(p);
+      setError(undefined);
     } catch(e: unknown) {
-      console.error("Unknown error", e);
+      if (axios.isAxiosError(e)) {
+        console.log(e.response?.data);
+        if (e?.response?.data) {
+          const message = e.response.data.error[0].message;
+          console.error(message);
+          setError(message);
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
     }
   };
 
@@ -94,7 +104,8 @@ const PatientPage = () => {
       gender: {patient?.gender}<br />
       ssn: {patient?.ssn}<br />
       occupation: {patient?.occupation}
-      <h3>Add new entry</h3>
+      <h3>New entry</h3>
+      {error &&  <Alert severity="error">{error}</Alert>}
       <AddEntryForm onSubmit={addNewEntry}/>
       <h3>entries</h3>
       {patient?.entries?.map((e: Entry) =>

@@ -1,6 +1,6 @@
-import { TextField, Button, Select, MenuItem, InputLabel, OutlinedInput, SelectChangeEvent, FormControl } from "@mui/material";
+import { TextField, Button, Select, MenuItem, InputLabel, SelectChangeEvent, FormControl } from "@mui/material";
 import { SyntheticEvent, useEffect, useState } from "react";
-import { Diagnosis, EntryWithoutId, HealthCheckRating } from "../../types";
+import { Diagnosis, EntryWithoutId } from "../../types";
 import diagnosesService from "../../services/diagnoses";
 
 interface Props {
