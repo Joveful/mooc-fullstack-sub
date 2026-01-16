@@ -1,6 +1,7 @@
-import { TextField, Button } from "@mui/material";
-import { SyntheticEvent, useState } from "react";
-import { EntryWithoutId, HealthCheckRating } from "../../types";
+import { TextField, Button, Select, MenuItem, InputLabel, OutlinedInput, SelectChangeEvent, FormControl } from "@mui/material";
+import { SyntheticEvent, useEffect, useState } from "react";
+import { Diagnosis, EntryWithoutId, HealthCheckRating } from "../../types";
+import diagnosesService from "../../services/diagnoses";
 
 interface Props {
   onSubmit: (values: EntryWithoutId) => void;
@@ -10,10 +11,19 @@ const AddEntryForm = ({ onSubmit }: Props) => {
   const [description, setDescription] = useState<string>('');
   const [date, setDate] = useState<string>('');
   const [specialist, setSpecialist] = useState<string>('');
-  const [diagnosisCode, setDiagnosisCode] = useState<string>('');
+  const [diagnosis, setDiagnosis] = useState<Array<Diagnosis>>([]);
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
   const [rating, setRating] = useState<number>(1);
 
+  //const [entryType, setEntryType] = useState<string>('');
+
+  useEffect(() => {
+    const fetchDiagnosesList = async () => {
+      const data = await diagnosesService.getAll();
+      setDiagnosis(data);
+    };
+    void fetchDiagnosesList();
+  },[]);
 
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -26,6 +36,12 @@ const AddEntryForm = ({ onSubmit }: Props) => {
       diagnosisCodes
     });
   };
+
+  const handleChange = (event: SelectChangeEvent<typeof diagnosisCodes>) => {
+    const value = event.target.value;
+    setDiagnosisCodes(typeof value === "string" ? value.split(',') : value);
+  };
+
 
   return (
     <div>
@@ -55,13 +71,24 @@ const AddEntryForm = ({ onSubmit }: Props) => {
           value={rating}
           onChange={(e) => setRating(Number(e.target.value))}
         />
-        <TextField
-          label="Diagnosis codes"
-          fullWidth
-          value={diagnosisCode}
-          onChange={(e) => setDiagnosisCode(e.target.value)}
-        />
-        <Button variant="contained">Add</Button>
+        <FormControl fullWidth>
+          <InputLabel id="diag-select-id">Diagnoses</InputLabel> 
+          <Select
+            labelId="diag-select-id"
+            id="diagnoses"
+            multiple
+            value={diagnosisCodes}
+            onChange={handleChange}
+          >
+            {diagnosis.map(d => (
+              <MenuItem
+                key={d['code']}
+                value={d['code']}
+              >{d['code']}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Button type="submit" variant="contained">Add</Button>
       </form>
     </div>
   );

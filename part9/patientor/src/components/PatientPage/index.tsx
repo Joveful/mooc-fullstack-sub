@@ -1,14 +1,16 @@
 import { useParams } from "react-router-dom";
-import { Entry, HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry, Patient } from "../../types";
+import { Entry, EntryWithoutId, HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry, Patient } from "../../types";
 import patientService from "../../services/patients";
 //import diagnosisService from "../../services/diagnoses";
-import { useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 
 import WorkIcon from '@mui/icons-material/Work';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { Button } from '@mui/material';
 import AddEntryForm from "./AddEntryForm";
+import axios from "axios";
+
 
 const HospitalEntryComponent = ({ entry }: { entry: HospitalEntry }) => {
   return (
@@ -75,6 +77,16 @@ const PatientPage = () => {
     void fetchPatient(id);
   }, [id]);
 
+  const addNewEntry = async (values: EntryWithoutId) => {
+    console.log(values);
+    try {
+      await patientService.createEntry(values, id);
+      const p = await patientService.getPatientById(id);
+      setPatient(p);
+    } catch(e: unknown) {
+      console.error("Unknown error", e);
+    }
+  };
 
   return (
     <div>
@@ -83,13 +95,12 @@ const PatientPage = () => {
       ssn: {patient?.ssn}<br />
       occupation: {patient?.occupation}
       <h3>Add new entry</h3>
-      <AddEntryForm />
+      <AddEntryForm onSubmit={addNewEntry}/>
       <h3>entries</h3>
       {patient?.entries?.map((e: Entry) =>
         <div key={e.id}>
           {EntryDetails({ entry: e })}
         </div>)}
-      <Button variant="contained">Add new entry</Button>
     </div>
   );
 };
