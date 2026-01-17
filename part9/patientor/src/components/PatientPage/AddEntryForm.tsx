@@ -1,26 +1,26 @@
-import { TextField, Button, Select, MenuItem, InputLabel, SelectChangeEvent, FormControl } from "@mui/material";
+import { TextField, Button, Select, MenuItem, InputLabel, SelectChangeEvent, FormControl, Grid } from "@mui/material";
 import { SyntheticEvent, useEffect, useState } from "react";
 import { Diagnosis, EntryWithoutId } from "../../types";
 import diagnosesService from "../../services/diagnoses";
 
 interface Props {
   onSubmit: (values: EntryWithoutId) => void;
+  setShow: (show: boolean) => void;
 }
 
-const AddEntryForm = ({ onSubmit }: Props) => {
+const AddEntryForm = ({ onSubmit, setShow }: Props) => {
+  const [entryType, setEntryType] = useState<string>('HealthCheck');
   const [description, setDescription] = useState<string>('');
-  const [date, setDate] = useState<string>('');
+  const [date, setDate] = useState<string>('a');
   const [specialist, setSpecialist] = useState<string>('');
   const [diagnosis, setDiagnosis] = useState<Array<Diagnosis>>([]);
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
   const [employerName, setEmployerName] = useState<string>('');
   const [sickLeaveStart, setSickLeaveStart] = useState<string>('a');
-  const [sickLeaveEnd, setSickLeaveEnd] = useState<string>('');
-  const [rating, setRating] = useState<number>(1);
-  const [dischargeDate, setDischargeDate] = useState<string>('');
+  const [sickLeaveEnd, setSickLeaveEnd] = useState<string>('a');
+  const [rating, setRating] = useState<number>(0);
+  const [dischargeDate, setDischargeDate] = useState<string>('a');
   const [criteria, setCriteria] = useState<string>('');
-
-  const [entryType, setEntryType] = useState<string>('HealthCheck');
 
   useEffect(() => {
     const fetchDiagnosesList = async () => {
@@ -32,25 +32,28 @@ const AddEntryForm = ({ onSubmit }: Props) => {
 
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
+
+    // For some reason 'type: entryType' can't be shared through this object
+    const shared = {
+      description,
+      date,
+      specialist,
+      diagnosisCodes
+    };
+
     switch (entryType) {
       case "HealthCheck":
         onSubmit({
-          description,
-          date,
-          specialist,
-          type: "HealthCheck",
+          ...shared,
+          type: entryType,
           healthCheckRating: rating,
-          diagnosisCodes,
         });
         break;
       case "OccupationalHealthcare":
         onSubmit({
-          description,
-          date,
-          specialist,
-          type: "OccupationalHealthcare",
+          ...shared,
+          type: entryType,
           employerName,
-          diagnosisCodes,
           sickLeave: {
             startDate: sickLeaveStart,
             endDate: sickLeaveEnd
@@ -59,11 +62,8 @@ const AddEntryForm = ({ onSubmit }: Props) => {
         break;
       case "Hospital":
         onSubmit({
-          description,
-          date,
-          specialist,
-          type: "Hospital",
-          diagnosisCodes,
+          ...shared,
+          type: entryType,
           discharge: {
             date: dischargeDate,
             criteria: criteria
@@ -100,7 +100,7 @@ const AddEntryForm = ({ onSubmit }: Props) => {
         />
         <TextField
           label="Date"
-          fullWidth
+          type="date"
           placeholder="YYYY-MM-DD"
           value={date}
           onChange={(e) => setDate(e.target.value)}
@@ -111,12 +111,40 @@ const AddEntryForm = ({ onSubmit }: Props) => {
           value={specialist}
           onChange={(e) => setSpecialist(e.target.value)}
         />
-        {entryType === "HealthCheck" ? <TextField
-          label="Healthcheck rating"
+        <FormControl fullWidth >
+          <InputLabel id="diag-select-id">Diagnoses</InputLabel> 
+          <Select
+            labelId="diag-select-id"
+            id="diagnoses"
+            multiple
+            value={diagnosisCodes}
+            onChange={handleChange}
+          > 
+            {diagnosis.map(d => (
+              <MenuItem
+                key={d['code']}
+                value={d['code']}
+              >{d['code']}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {entryType === "HealthCheck" ? 
+        <>
+        <InputLabel id="rating-id">Rating</InputLabel>
+        <Select
+          labelId="rating-id"
           fullWidth
           value={rating}
           onChange={(e) => setRating(Number(e.target.value))}
-        /> : null}
+
+        >
+          <MenuItem value={0}>Healthy</MenuItem>
+          <MenuItem value={1}>Low risk</MenuItem>
+          <MenuItem value={2}>High risk</MenuItem>
+          <MenuItem value={3}>Critical risk</MenuItem>
+        </Select>
+        </> : null}
 
         {entryType === "OccupationalHealthcare" ? 
         <>
@@ -155,24 +183,29 @@ const AddEntryForm = ({ onSubmit }: Props) => {
           onChange={(e) => setCriteria(e.target.value)}
         />
         </> : null}
-        <FormControl fullWidth>
-          <InputLabel id="diag-select-id">Diagnoses</InputLabel> 
-          <Select
-            labelId="diag-select-id"
-            id="diagnoses"
-            multiple
-            value={diagnosisCodes}
-            onChange={handleChange}
-          > 
-            {diagnosis.map(d => (
-              <MenuItem
-                key={d['code']}
-                value={d['code']}
-              >{d['code']}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Button type="submit" variant="contained">Add</Button>
+
+        <Grid>
+          <Grid item>
+            <Button
+              color="secondary"
+              variant="contained"
+              type="button"
+              style={{ float: "left" }}
+              onClick={()=> setShow(false)}
+            >
+              Cancel
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button 
+              type="submit" 
+              variant="contained"
+              style={{ float: "right" }}
+            >
+              Add
+            </Button>
+          </Grid>
+        </Grid>
       </form>
     </div>
   );

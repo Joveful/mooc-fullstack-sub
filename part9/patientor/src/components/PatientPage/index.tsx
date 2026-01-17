@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import WorkIcon from '@mui/icons-material/Work';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import { Alert } from '@mui/material';
+import { Alert, Button } from '@mui/material';
 import AddEntryForm from "./AddEntryForm";
 import axios from "axios";
 
@@ -17,19 +17,20 @@ const HospitalEntryComponent = ({ entry }: { entry: HospitalEntry }) => {
     <div><p>
       {entry.date} <LocalHospitalIcon /><br />
       <i>{entry.description}</i><br />
-      diagnosed by: {entry.specialist}
+      diagnosed by {entry.specialist}<br />
+      discharged {entry.discharge?.date}: {entry.discharge?.criteria}
     </p></div>
   );
 };
 
 const OccupationalHealthcareEntryComponent = ({ entry }: { entry: OccupationalHealthcareEntry }) => {
-  console.log(entry);
   return (
     <div><p>
       {entry.date} <WorkIcon /><br />
       <i>{entry.description}</i><br />
-      {entry.employerName}<br />
-      diagnosed by: {entry.specialist}
+      diagnosed by {entry.specialist}<br />
+      employer: {entry.employerName}<br />
+      sick leave from {entry.sickLeave?.startDate} to {entry.sickLeave?.endDate}
     </p></div>
   );
 };
@@ -40,7 +41,7 @@ const HealthCheckEntryComponent = ({ entry }: { entry: HealthCheckEntry }) => {
       {entry.date} <MedicalServicesIcon /><br />
       <i>{entry.description}</i><br />
       {entry.healthCheckRating}<br />
-      diagnosed by: {entry.specialist}</p>
+      diagnosed by {entry.specialist}</p>
     </div>
   );
 };
@@ -62,9 +63,11 @@ const EntryDetails = ({ entry }: { entry: Entry }) => {
 };
 
 const PatientPage = () => {
-  const id = String(useParams().id);
   const [patient, setPatient] = useState<Patient>();
   const [error, setError] = useState<string>();
+  const [show, setShow] = useState<boolean>(false);
+
+  const id = String(useParams().id);
 
   useEffect(() => {
     const fetchPatient = async (id: string) => {
@@ -81,6 +84,7 @@ const PatientPage = () => {
       const p = await patientService.getPatientById(id);
       setPatient(p);
       setError(undefined);
+      setShow(false);
     } catch(e: unknown) {
       if (axios.isAxiosError(e)) {
         console.log(e.response?.data);
@@ -105,9 +109,18 @@ const PatientPage = () => {
       ssn: {patient?.ssn}<br />
       occupation: {patient?.occupation}
       <h3>New entry</h3>
+      {show === true ? 
+      <>
       {error &&  <Alert severity="error">{error}</Alert>}
-      <AddEntryForm onSubmit={addNewEntry}/>
-      <h3>entries</h3>
+      <AddEntryForm onSubmit={addNewEntry} setShow={setShow} />
+      </> : 
+      <Button
+        variant="contained"
+        onClick={() => setShow(true)}
+      >Add new entry</Button>
+      }
+      <br />
+      <h3>Entries</h3>
       {patient?.entries?.map((e: Entry) =>
         <div key={e.id}>
           {EntryDetails({ entry: e })}
