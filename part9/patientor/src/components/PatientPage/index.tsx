@@ -28,7 +28,7 @@ const OccupationalHealthcareEntryComponent = ({ entry }: { entry: OccupationalHe
     <div><p>
       {entry.date} <WorkIcon /><br />
       <i>{entry.description}</i><br />
-      {entry.employerName}
+      {entry.employerName}<br />
       diagnosed by: {entry.specialist}
     </p></div>
   );
